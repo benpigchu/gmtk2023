@@ -15,12 +15,15 @@ public class Sheep : MonoBehaviour
 	public SpriteRenderer sprite;
 	public SheepController controller;
     public SheepMovementConfig movement;
+
+    public bool collected{get;private set;}
 	void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
 		sprite = GetComponent<SpriteRenderer>();
         controller=Instantiate<SheepController>(controller);
 		controller.Init(this);
+        collected=false;
 	}
 
 	// Start is called before the first frame update
@@ -42,7 +45,10 @@ public class Sheep : MonoBehaviour
 	void FixedUpdate()
 	{
         controller?.Update();
-		Vector2 TargetDirection = controller?.GetTargetDirection()?.normalized ?? Vector2.zero;
+		Vector2 TargetDirection = Vector2.right;
+        if(!collected){
+            TargetDirection=controller?.GetTargetDirection()?.normalized ?? Vector2.zero;
+        }
         Vector2 TargetVelocity = TargetDirection*movement.Speed;
         Vector2 DeltaVelocity = TargetVelocity-rigidbody.velocity;
         if(DeltaVelocity.SqrMagnitude()==0){
@@ -58,6 +64,11 @@ public class Sheep : MonoBehaviour
         Shepherd shepherd=col.GetComponent<Shepherd>();
         if(shepherd!=null){
             shepherd.HitSheep(this);
+        }
+
+        FinishArea finishArea=col.GetComponent<FinishArea>();
+        if(finishArea!=null){
+            collected=true;
         }
     }
 
