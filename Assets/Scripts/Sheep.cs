@@ -53,7 +53,7 @@ public class Sheep : MonoBehaviour
         rigidbody.velocity+=ResultDeltaVelocity;
 	}
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerStay2D(Collider2D col)
     {
         Shepherd shepherd=col.GetComponent<Shepherd>();
         if(shepherd!=null){

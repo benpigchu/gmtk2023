@@ -5,14 +5,17 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    public Sheep playerSheep;
-    private List<Sheep> sheeps=new List<Sheep>();
+	public Sheep PlayerSheep;
+	public GameObject BotSheepPrefab;
+	public RectSpawnArea BotSpawnArea;
+	public new CameraController camera;
+	private List<Sheep> sheeps = new List<Sheep>();
 
-    public static GameManager Instance;
+	public static GameManager Instance;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+	// Start is called before the first frame update
+	void Start()
+	{
 		if (Instance == null)
 		{
 			Instance = this;
@@ -21,25 +24,42 @@ public class GameManager : MonoBehaviour
 		{
 			Destroy(gameObject);
 		}
-        sheeps.Add(playerSheep);
-    }
+		sheeps.Add(PlayerSheep);
+		for (int i = 0; i < 2; i++)
+		{
+			TryGenerateBotSheep();
+		}
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
+	private void TryGenerateBotSheep()
+	{
+		Vector2? position = BotSpawnArea.SelectSpawnPosition(Vector2.one);
+		if (position != null)
+		{
+			GameObject sheepGameObject = Instantiate(BotSheepPrefab, position.Value, Quaternion.identity);
+			Sheep sheep = sheepGameObject.GetComponent<Sheep>();
+			sheeps.Add(sheep);
+		}
+	}
 
-    }
+	// Update is called once per frame
+	void Update()
+	{
 
-    public Sheep FindLastSheep(){
-        float xMin=float.PositiveInfinity;
-        Sheep result=null;
-        foreach (var sheep in sheeps)
-        {
-            if(sheep.transform.position.x<xMin){
-                xMin=sheep.transform.position.x;
-                result=sheep;
-            }
-        }
-        return result;
-    }
+	}
+
+	public Sheep FindLastSheep()
+	{
+		float xMin = float.PositiveInfinity;
+		Sheep result = null;
+		foreach (var sheep in sheeps)
+		{
+			if (sheep.transform.position.x < xMin)
+			{
+				xMin = sheep.transform.position.x;
+				result = sheep;
+			}
+		}
+		return result;
+	}
 }
