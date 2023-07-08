@@ -5,17 +5,21 @@ using UnityEngine;
 public abstract class SheepController : ScriptableObject
 {
 	public virtual void Init(Sheep sheep) { }
+	public virtual void Update() { }
 	public abstract Vector2? GetTargetDirection();
 }
 
 public class Sheep : MonoBehaviour
 {
 	public new Rigidbody2D rigidbody;
+	public SpriteRenderer sprite;
 	public SheepController controller;
     public SheepMovementConfig movement;
 	void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
+		sprite = GetComponent<SpriteRenderer>();
+        controller=Instantiate<SheepController>(controller);
 		controller.Init(this);
 	}
 
@@ -28,11 +32,18 @@ public class Sheep : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+        if(rigidbody.velocity.x>0){
+            sprite.flipX=false;
+        }
 
+        if(rigidbody.velocity.x<0){
+            sprite.flipX=true;
+        }
 	}
 	void FixedUpdate()
 	{
-		Vector2 TargetDirection = controller?.GetTargetDirection() ?? Vector2.zero;
+        controller?.Update();
+		Vector2 TargetDirection = controller?.GetTargetDirection()?.normalized ?? Vector2.zero;
         Vector2 TargetVelocity = TargetDirection*movement.Speed;
         Vector2 DeltaVelocity = TargetVelocity-rigidbody.velocity;
         if(DeltaVelocity.SqrMagnitude()==0){
