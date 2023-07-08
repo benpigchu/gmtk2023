@@ -26,7 +26,6 @@ public class Sheep : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-
 	}
 
 	// Update is called once per frame
@@ -53,4 +52,16 @@ public class Sheep : MonoBehaviour
         Vector2 ResultDeltaVelocity = DeltaDirection*Mathf.Min(movement.MaxAccelerator*Time.fixedDeltaTime,DeltaVelocity.magnitude);
         rigidbody.velocity+=ResultDeltaVelocity;
 	}
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        Shepherd shepherd=col.GetComponent<Shepherd>();
+        if(shepherd!=null){
+            shepherd.HitSheep(this);
+        }
+    }
+
+    public void Hit(){
+        rigidbody.velocity=new Vector2(movement.HitSpeed,0);
+    }
 }

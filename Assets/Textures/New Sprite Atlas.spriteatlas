@@ -65,6 +65,7 @@ SpriteAtlas:
   - {fileID: -1645857037, guid: 31624e4670ac6d341950038c7629685e, type: 3}
   - {fileID: -1155468594, guid: 31624e4670ac6d341950038c7629685e, type: 3}
   - {fileID: -1339120395, guid: 31624e4670ac6d341950038c7629685e, type: 3}
+  - {fileID: 21300000, guid: 49f0590e64951364ab6201933eff42a1, type: 3}
   m_PackedSpriteNamesToIndex:
   - sheep
   - tileset_0
@@ -92,6 +93,7 @@ SpriteAtlas:
   - tileset_19
   - tileset_21
   - tileset_18
+  - shepherd
   m_RenderDataMap: {}
   m_Tag: New Sprite Atlas
   m_IsVariant: 0

@@ -7,4 +7,5 @@ public class SheepMovementConfig : ScriptableObject
 {
 	public float Speed;
 	public float MaxAccelerator;
+	public float HitSpeed;
 }
