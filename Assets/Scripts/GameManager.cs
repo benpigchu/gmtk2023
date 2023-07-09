@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -9,9 +10,13 @@ public class GameManager : MonoBehaviour
 	public GameObject BotSheepPrefab;
 	public RectSpawnArea BotSpawnArea;
 	public new CameraController camera;
+
+	public TextMeshProUGUI timerText;
 	private List<Sheep> sheeps = new List<Sheep>();
 
     private bool finished=false;
+
+    private float timer=0;
 
 	public static GameManager Instance;
 
@@ -48,6 +53,9 @@ public class GameManager : MonoBehaviour
 	void Update()
 	{
         if(!finished){
+            timer+=Time.deltaTime;
+			int timeRemainSeconds = System.Math.Max(0, Mathf.FloorToInt(timer));
+			timerText.text = $"{timeRemainSeconds / 60}:{timeRemainSeconds % 60:D2}";
             bool allCollected=true;
             foreach (var sheep in sheeps)
             {
