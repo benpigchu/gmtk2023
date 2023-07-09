@@ -19,6 +19,8 @@ public class Sheep : MonoBehaviour
 
 	public bool collected { get; private set; }
 
+	private Vector3 initPosition;
+
 	private Bush capturer;
 	void Awake()
 	{
@@ -27,6 +29,7 @@ public class Sheep : MonoBehaviour
 		controller = Instantiate<SheepController>(controller);
 		controller.Init(this);
 		collected = false;
+		initPosition = transform.position;
 	}
 
 	// Start is called before the first frame update
@@ -51,9 +54,10 @@ public class Sheep : MonoBehaviour
 	{
 		if (capturer != null)
 		{
-			rigidbody.velocity = Vector2.zero;
+            rigidbody.bodyType=RigidbodyType2D.Static;
 			return;
 		}
+        rigidbody.bodyType=RigidbodyType2D.Dynamic;
 		controller?.Update();
 		Vector2 TargetDirection = Vector2.right;
 		if (!collected)
@@ -128,5 +132,15 @@ public class Sheep : MonoBehaviour
         }else{
     		rigidbody.velocity = new Vector2(movement.HitSpeed, 0);
         }
+	}
+
+	internal void Reset()
+	{
+		transform.position=initPosition;
+		rigidbody.position=initPosition;
+		rigidbody.velocity=Vector2.zero;
+		rigidbody.bodyType=RigidbodyType2D.Dynamic;
+		collected=false;
+		capturer=null;
 	}
 }

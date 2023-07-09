@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,14 +11,17 @@ public class Shepherd : MonoBehaviour
 
     public float speed;
 	private Sheep target;
-	private float timer=float.PositiveInfinity;
+	private float timer=0;
 
     public float restTimeout;
+
+	private Vector3 initPosition;
 
 	void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
 		sprite = GetComponent<SpriteRenderer>();
+		initPosition = transform.position;
 	}
     // Start is called before the first frame update
     void Start()
@@ -57,4 +61,13 @@ public class Shepherd : MonoBehaviour
             timer=0;
         }
     }
+
+	internal void Reset()
+	{
+		transform.position=initPosition;
+		rigidbody.position=initPosition;
+		rigidbody.velocity=Vector2.zero;
+        target=null;
+        timer=0;
+	}
 }

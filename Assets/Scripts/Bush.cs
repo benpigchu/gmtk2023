@@ -29,6 +29,6 @@ public class Bush : MonoBehaviour
 
 	internal void OnHit()
 	{
-		Destroy(gameObject);
+		gameObject.SetActive(false);
 	}
 }

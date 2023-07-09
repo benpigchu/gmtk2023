@@ -1,12 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+public enum GameView
+{
+	Title,
+	Playing,
+	Result,
+}
 public class GameManager : MonoBehaviour
 {
 
 	public Sheep PlayerSheep;
+	public Shepherd Shepherd;
 	public GameObject BotSheepPrefab;
 	public RectSpawnArea BotSpawnArea;
 	public GameObject BushPrefab;
@@ -14,19 +23,30 @@ public class GameManager : MonoBehaviour
 	public new CameraController camera;
 
 	public TextMeshProUGUI timerText;
-    public int botSheepCount;
-    public int bushCount;
+	public TextMeshProUGUI resultText;
+	private string resultTemplate;
+
+	public int botSheepCount;
+	public int bushCount;
+
+	public float finishedTime;
+
+	public GameObject PlayingUILayer;
+	public GameObject ResultUILayer;
+	public GameObject TitleUILayer;
+	public GameObject Playfield;
+	public GameView initialView = GameView.Title;
+	private GameView currentView = GameView.Title;
 	private List<Sheep> sheeps = new List<Sheep>();
 	private List<Bush> bushes = new List<Bush>();
 
-    private bool finished=false;
+	private bool finished = false;
 
-    private float timer=0;
+	private float timer = 0;
+	private float finishedTimer = 0;
 
 	public static GameManager Instance;
-
-	// Start is called before the first frame update
-	void Start()
+	void Awake()
 	{
 		if (Instance == null)
 		{
@@ -36,15 +56,13 @@ public class GameManager : MonoBehaviour
 		{
 			Destroy(gameObject);
 		}
-		sheeps.Add(PlayerSheep);
-		for (int i = 0; i < botSheepCount; i++)
-		{
-			TryGenerateBotSheep();
-		}
-		for (int i = 0; i < bushCount; i++)
-		{
-			TryGenerateBush();
-		}
+		resultTemplate = resultText.text;
+	}
+
+	// Start is called before the first frame update
+	void Start()
+	{
+		SetGameView(initialView);
 	}
 
 	private void TryGenerateBotSheep()
@@ -72,23 +90,78 @@ public class GameManager : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-        if(!finished){
-            timer+=Time.deltaTime;
-			int timeRemainSeconds = System.Math.Max(0, Mathf.FloorToInt(timer));
-			timerText.text = $"{timeRemainSeconds / 60}:{timeRemainSeconds % 60:D2}";
-            bool allCollected=true;
-            foreach (var sheep in sheeps)
-            {
-                if(!sheep.collected){
-                    allCollected=false;
-                    break;
-                }
-            }
-            if(allCollected){
-                finished=true;
-                Debug.Log("Finished");
-            }
-        }
+		if (currentView == GameView.Playing)
+		{
+			if (finished)
+			{
+				finishedTimer += Time.deltaTime;
+				if (finishedTimer > finishedTime)
+				{
+					SetGameView(GameView.Result);
+					int timeSeconds = System.Math.Max(0, Mathf.FloorToInt(timer));
+					string result = $"{timeSeconds / 60:D2}:{timeSeconds % 60:D2}";
+					resultText.text = string.Format(resultTemplate, result);
+				}
+			}
+			else
+			{
+				timer += Time.deltaTime;
+				int timeSeconds = System.Math.Max(0, Mathf.FloorToInt(timer));
+				timerText.text = $"{timeSeconds / 60:D2}:{timeSeconds % 60:D2}";
+				bool allCollected = true;
+				foreach (var sheep in sheeps)
+				{
+					if (!sheep.collected)
+					{
+						allCollected = false;
+						break;
+					}
+				}
+				if (allCollected)
+				{
+					finished = true;
+				}
+			}
+		}
+		else
+		{
+			if (Keyboard.current.spaceKey.IsPressed())
+			{
+				SetGameView(GameView.Playing);
+				Reset();
+			}
+		}
+	}
+
+	private void Reset()
+	{
+		foreach (var sheep in sheeps)
+		{
+			if (sheep != PlayerSheep)
+			{
+				Destroy(sheep.gameObject);
+			}
+		}
+		foreach (var bush in bushes)
+		{
+			Destroy(bush.gameObject);
+		}
+		sheeps.Clear();
+		bushes.Clear();
+		PlayerSheep.Reset();
+		Shepherd.Reset();
+		sheeps.Add(PlayerSheep);
+		for (int i = 0; i < botSheepCount; i++)
+		{
+			TryGenerateBotSheep();
+		}
+		for (int i = 0; i < bushCount; i++)
+		{
+			TryGenerateBush();
+		}
+		timer = 0;
+		finishedTimer = 0;
+		finished = false;
 	}
 
 	public Sheep FindLastSheep()
@@ -97,9 +170,10 @@ public class GameManager : MonoBehaviour
 		Sheep result = null;
 		foreach (var sheep in sheeps)
 		{
-            if(sheep.collected){
-                continue;
-            }
+			if (sheep.collected)
+			{
+				continue;
+			}
 			if (sheep.transform.position.x < xMin)
 			{
 				xMin = sheep.transform.position.x;
@@ -107,5 +181,14 @@ public class GameManager : MonoBehaviour
 			}
 		}
 		return result;
+	}
+
+	void SetGameView(GameView view)
+	{
+		currentView = view;
+		PlayingUILayer.SetActive(view == GameView.Playing);
+		ResultUILayer.SetActive(view == GameView.Result);
+		TitleUILayer.SetActive(view == GameView.Title);
+		Playfield.SetActive(view != GameView.Title);
 	}
 }
