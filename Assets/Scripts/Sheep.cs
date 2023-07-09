@@ -110,6 +110,7 @@ public class Sheep : MonoBehaviour
 
 	private void CapturedBy(Bush bush)
 	{
+		GameManager.Instance.PlayAudio(GameManager.Instance.CapturedSound,0.25f);
 		capturer = bush;
         transform.position=bush.transform.position;
 		rigidbody.position = bush.transform.position;
@@ -127,6 +128,7 @@ public class Sheep : MonoBehaviour
 
 	public void Hit()
 	{
+		GameManager.Instance.PlayAudio(GameManager.Instance.SheepSound,0.25f);
         if(capturer!=null){
             Release();
         }else{

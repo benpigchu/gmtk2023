@@ -30,5 +30,6 @@ public class Bush : MonoBehaviour
 	internal void OnHit()
 	{
 		gameObject.SetActive(false);
+		GameManager.Instance.PlayAudio(GameManager.Instance.DestroyedSound,0.25f);
 	}
 }

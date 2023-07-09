@@ -37,6 +37,10 @@ public class GameManager : MonoBehaviour
 	public GameObject Playfield;
 	public GameView initialView = GameView.Title;
 	private GameView currentView = GameView.Title;
+    public AudioSource AudioSource;
+    public AudioClip SheepSound;
+    public AudioClip CapturedSound;
+    public AudioClip DestroyedSound;
 	private List<Sheep> sheeps = new List<Sheep>();
 	private List<Bush> bushes = new List<Bush>();
 
@@ -191,4 +195,8 @@ public class GameManager : MonoBehaviour
 		TitleUILayer.SetActive(view == GameView.Title);
 		Playfield.SetActive(view != GameView.Title);
 	}
+
+    public void PlayAudio(AudioClip clip,float volume=1){
+        AudioSource.PlayOneShot(clip,volume);
+    }
 }
