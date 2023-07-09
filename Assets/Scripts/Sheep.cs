@@ -76,7 +76,6 @@ public class Sheep : MonoBehaviour
 		if (collected)
 		{
 			return;
-
 		}
 
 		Shepherd shepherd = col.GetComponent<Shepherd>();
@@ -98,18 +97,34 @@ public class Sheep : MonoBehaviour
 		}
 	}
 
+    void OnCollisionStay2D(Collision2D collision)
+	{
+        if(collision.relativeVelocity.magnitude>movement.Speed*1.1){
+            Release();
+        }
+    }
+
 	private void CapturedBy(Bush bush)
 	{
 		capturer = bush;
+        transform.position=bush.transform.position;
 		rigidbody.position = bush.transform.position;
+        rigidbody.bodyType=RigidbodyType2D.Static;
         bush.OnCapture();
 	}
+
+    void Release(){
+        if(capturer!=null){
+            capturer.OnHit();
+            rigidbody.bodyType=RigidbodyType2D.Dynamic;
+            capturer=null;
+        }
+    }
 
 	public void Hit()
 	{
         if(capturer!=null){
-            capturer.OnHit();
-            capturer=null;
+            Release();
         }else{
     		rigidbody.velocity = new Vector2(movement.HitSpeed, 0);
         }

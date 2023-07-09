@@ -9,10 +9,15 @@ public class GameManager : MonoBehaviour
 	public Sheep PlayerSheep;
 	public GameObject BotSheepPrefab;
 	public RectSpawnArea BotSpawnArea;
+	public GameObject BushPrefab;
+	public RectSpawnArea BushSpawnArea;
 	public new CameraController camera;
 
 	public TextMeshProUGUI timerText;
+    public int botSheepCount;
+    public int bushCount;
 	private List<Sheep> sheeps = new List<Sheep>();
+	private List<Bush> bushes = new List<Bush>();
 
     private bool finished=false;
 
@@ -32,9 +37,13 @@ public class GameManager : MonoBehaviour
 			Destroy(gameObject);
 		}
 		sheeps.Add(PlayerSheep);
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < botSheepCount; i++)
 		{
 			TryGenerateBotSheep();
+		}
+		for (int i = 0; i < bushCount; i++)
+		{
+			TryGenerateBush();
 		}
 	}
 
@@ -46,6 +55,17 @@ public class GameManager : MonoBehaviour
 			GameObject sheepGameObject = Instantiate(BotSheepPrefab, position.Value, Quaternion.identity);
 			Sheep sheep = sheepGameObject.GetComponent<Sheep>();
 			sheeps.Add(sheep);
+		}
+	}
+
+	private void TryGenerateBush()
+	{
+		Vector2? position = BushSpawnArea.SelectSpawnPosition(Vector2.one);
+		if (position != null)
+		{
+			GameObject bushGameObject = Instantiate(BushPrefab, position.Value, Quaternion.identity);
+			Bush bush = bushGameObject.GetComponent<Bush>();
+			bushes.Add(bush);
 		}
 	}
 
