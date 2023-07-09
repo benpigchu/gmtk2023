@@ -44,3 +44,6 @@ TagManager:
   - name: Mob
     uniqueID: 1762997855
     locked: 0
+  - name: Plant
+    uniqueID: 766314375
+    locked: 0
